@@ -29,14 +29,14 @@ provider:
 
 custom: 
   eventBus: webhookdemo
-  retryQueue: { Ref: RetryQueue }
+  retryQueue: { Ref: RetryCollectionQueue }
 
 resources:
   Resources:
-    RetryQueue:
+    RetryCollectionQueue:
       Type: "AWS::SQS::Queue"
       Properties:
-        QueueName: "RetryQueue"
+        QueueName: "RetryCollectionQueue"
 
 plugins:
   - serverless-pseudo-parameters
