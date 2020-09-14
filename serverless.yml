@@ -19,9 +19,9 @@ provider:
         - '*'
 
   environment:
-    backoffRate: 1.5
-    backoffIntervalSeconds: 3
-    backoffMaxRetries: 2
+    backoffRate: 3
+    backoffIntervalSeconds: 60
+    backoffMaxRetries: 10
     retryQueue: ${self:custom.retryQueue}
     eventBus: ${self:custom.eventBus}
     providerBasePath: 'https://fszntdeqr9.execute-api.us-east-1.amazonaws.com/dev/provider/'
@@ -89,3 +89,14 @@ functions:
                 - RetryCollectionQueue
                 - Arn
    
+  onCollectionSucceeded:
+    handler: src/handlers/events/onCollectionSucceeded.handler
+    maximumRetryAttempts: 0
+    events:
+        - eventBridge:
+            eventBus: ${self:custom.eventBus}
+            pattern:
+                detail-type:
+                  - CollectionSucceeded
+                source:
+                  - webhook-api

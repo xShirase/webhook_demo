@@ -14,7 +14,7 @@ export const makeEvent = (type: string, body: any) => prepareEvent(
 
 export const makeErrorEvent = (error: any, event: any): EventBridge.PutEventsRequestEntry => {
   // TODO Maybe use a proper logger, but below is enough for Cloudwatch debug based on id + faster
-  console.log(JSON.stringify(error));
+  console.log(error.message);
 
   const originalRequestId = event.id;
   const maxRetries = parseInt(process.env.backoffMaxRetries || '3', 10);
@@ -27,18 +27,17 @@ export const makeErrorEvent = (error: any, event: any): EventBridge.PutEventsReq
   } else if (canCommunicate && !shouldRetry) {
     return makeEvent(EVENT_MAXRETRY, { ...event.detail, originalRequestId });
   } else {
-    // Something else happened, let's not retry
     return makeEvent(EVENT_CRITICAL, { originalRequestId });
   }
 };
 
-export const makeRetryMessage = (event: any): SendMessageRequest => ({
+export const makeRetryMessage = (event: EventBridge.PutEventsRequestEntry): SendMessageRequest => ({
   MessageBody: JSON.stringify(event),
-  DelaySeconds: computeBackoff(event),
+  DelaySeconds: computeBackoff(JSON.parse(event.Detail || '')),
   QueueUrl: process.env.retryQueue || '',
 });
 
-export const computeBackoff = ({ detail }): number => {
+export const computeBackoff = (detail): number => {
   const interval = parseInt(process.env.backoffIntervalSeconds || '5', 10);
   const rate = parseFloat(process.env.backoffRate || '1.5');
   const t = interval * Math.pow(rate, detail.attempts || 0);
@@ -54,16 +53,21 @@ export const requestBills = async (event): Promise<void> => {
   await sendEvents([successEvent]);
 };
 
-export const handleProviderError = async (err, event): Promise<void> => {
+export const handleProviderError = async (err: any, event: any): Promise<void> => {
   const errorEvent = makeErrorEvent(err, event);
-  // TODO remove that
-  console.log(errorEvent);
+  // TODO remove logs
+  // console.log(errorEvent);
 
   if (errorEvent.DetailType === EVENT_RETRY) {
     const retryMessage = makeRetryMessage(errorEvent);
-    console.log(retryMessage);
+    // console.log(retryMessage);
     const sqsRes = await sendMessage(retryMessage);
-    console.log(sqsRes);
+    // console.log(sqsRes);
   }
   await sendEvents([errorEvent]);
+};
+
+export const callHook = async (event): Promise<void> => {
+  const { callbackUrl } = event.detail;
+  await axios.post(callBackUrl, event.detail);
 };
