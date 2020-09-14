@@ -1,0 +1,20 @@
+{
+    "type": "object",
+    "title": "Schema of the Collection Request",
+    "required": [
+        "callbackUrl",
+        "provider"
+    ],
+    "properties": {
+        "callbackUrl": {
+            "type": "string",
+            "title": "The Callback URL",
+            "default": ""
+        },
+        "provider": {
+            "type": "string",
+            "title": "The Provider to Collect",
+            "default": ""
+        }
+    }
+}
