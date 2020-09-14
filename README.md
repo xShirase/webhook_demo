@@ -67,3 +67,8 @@ I've broken down the work to be done into stories (for easy PRs) :
 - [DEMO-004 onCollectionRequested endpoint](https://github.com/xShirase/webhook_demo/pull/4)
 - [DEMO-005 Retry mechanism (onCollectionFailed)](https://github.com/xShirase/webhook_demo/pull/5)
 - [DEMO-006 onCollectionSucceeded endpoint](https://github.com/xShirase/webhook_demo/pull/6)
+
+#### Further Work
+- TODO hunting
+- add types 
+- add handler tests

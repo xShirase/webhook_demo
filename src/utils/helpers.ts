@@ -7,7 +7,7 @@ import { EventBridge } from 'aws-sdk';
 
 
 
-export const makeEvent = (type, body) => prepareEvent(
+export const makeEvent = (type: string, body: any) => prepareEvent(
   JSON.stringify(body),
   type,
   'webhook-api');
@@ -50,7 +50,7 @@ export const requestBills = async (event): Promise<void> => {
   const { providerBasePath } = process.env;
   const res = await axios.get(`${providerBasePath}${provider}`);
   const originalRequestId = event.id;
-  const successEvent = makeEvent(EVENT_SUCCESS, { originalRequestId, bills: res.data });
+  const successEvent = makeEvent(EVENT_SUCCESS, { originalRequestId, callbackUrl, bills: res.data });
   await sendEvents([successEvent]);
 };
 
