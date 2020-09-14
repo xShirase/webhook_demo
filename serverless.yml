@@ -65,3 +65,15 @@ functions:
             schema:
               application/json: ${file(src/schemas/CollectionRequest.json)}
 
+  
+  onCollectionRequested:
+    handler: src/handlers/events/onCollectionRequested.handler
+    maximumRetryAttempts: 0
+    events:
+        - eventBridge:
+            eventBus: ${self:custom.eventBus}
+            pattern:
+                detail-type:
+                  - CollectionRequested
+                source:
+                  - webhook-api
