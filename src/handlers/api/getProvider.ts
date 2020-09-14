@@ -18,7 +18,6 @@ export const getProvider = async (event: any) => {
         ? { body: JSON.stringify(bills), statusCode: 200 }
         : { body: 'No Provider', statusCode: 404 }
 
-    console.log(res)
     return res
 }
 
