@@ -1,7 +1,7 @@
 import middy from '@middy/core';
 import doNotWaitForEmptyEventLoop from '@middy/do-not-wait-for-empty-event-loop'
-import { makeErrorEvent, requestBills, makeRetryMessage } from '../../utils/axios'
-import { EVENT_RETRY, EVENT_CRITICAL, EVENT_SUCCESS } from '../../constants'
+import { makeErrorEvent, requestBills, makeRetryMessage } from '../../utils/helpers'
+import { EVENT_RETRY } from '../../constants'
 import { sendMessage } from '../../utils/aws/SQS'
 import { sendEvents } from '../../utils/aws/EventBridge'
 
@@ -35,4 +35,3 @@ export const handler = middy(onCollectionRequested)
       runOnAfter: true,
       runOnError: true,
     }));
-// .use(validator({ inputSchema }));
