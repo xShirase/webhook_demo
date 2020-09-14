@@ -16,5 +16,4 @@ export const onCollectionSucceeded = async (event: any) => {
 }
 
 
-export const handler = onCollectionFailed
-// .use(validator({ inputSchema }));
+export const handler = onCollectionSucceeded
