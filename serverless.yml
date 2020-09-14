@@ -1,0 +1,56 @@
+service: webhook_demo
+frameworkVersion: '2'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'events:PutEvents'
+      Resource:
+        - '*'
+    - Effect: 'Allow'
+      Action:
+        - 'sqs:SendMessage'
+      Resource:
+        - '*'
+
+  environment:
+    backoffRate: 1.5
+    backoffIntervalSeconds: 3
+    backoffMaxRetries: 2
+    retryQueue: ${self:custom.retryQueue}
+    eventBus: ${self:custom.eventBus}
+    providerBasePath: 'https://fszntdeqr9.execute-api.us-east-1.amazonaws.com/dev/provider/'
+
+
+custom: 
+  eventBus: webhook_demo
+  retryQueue: { Ref: RetryQueue }
+
+resources:
+  Resources:
+    RetryQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "RetryQueue"
+
+plugins:
+  - serverless-pseudo-parameters
+  - serverless-plugin-typescript
+
+functions:
+
+  getProvider:
+    handler: src/handlers/api/getProvider.handler
+    events: 
+      - http:
+          path: provider/{name}
+          method: get
+          request:
+            parameters:
+              paths:
+                name: true
