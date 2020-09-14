@@ -54,3 +54,14 @@ functions:
             parameters:
               paths:
                 name: true
+
+  requestCollection:
+    handler: handlers/api/requestCollection.handler
+    events:
+      - http:
+          path: collect
+          method: POST
+          request:
+            schema:
+              application/json: ${file(schemas/CollectionRequest.json)}
+
