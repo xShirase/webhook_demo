@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "@middy/core": "^1.4.0",
+    "@middy/do-not-wait-for-empty-event-loop": "^1.4.0",
+    "@middy/http-error-handler": "^1.4.0",
     "@types/aws-lambda": "^8.10.62",
     "aws-sdk": "^2.751.0"
   }
