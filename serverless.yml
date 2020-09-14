@@ -77,3 +77,15 @@ functions:
                   - CollectionRequested
                 source:
                   - webhook-api
+
+  onCollectionFailed:
+    handler: src/handlers/events/onCollectionFailed.handler
+    maximumRetryAttempts: 0
+    events:
+        - sqs:
+            batchSize: 1
+            arn:
+              Fn::GetAtt:
+                - RetryCollectionQueue
+                - Arn
+   

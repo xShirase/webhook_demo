@@ -1,9 +1,6 @@
 import middy from '@middy/core';
 import doNotWaitForEmptyEventLoop from '@middy/do-not-wait-for-empty-event-loop'
-import { makeErrorEvent, requestBills, makeRetryMessage } from '../../utils/helpers'
-import { EVENT_RETRY } from '../../constants'
-import { sendMessage } from '../../utils/aws/SQS'
-import { sendEvents } from '../../utils/aws/EventBridge'
+import { handleProviderError, requestBills } from '../../utils/helpers'
 
 
 export const onCollectionRequested = async (event: any) => {
@@ -13,17 +10,7 @@ export const onCollectionRequested = async (event: any) => {
     await requestBills(event);
     return;
   } catch (err) {
-    const errorEvent = makeErrorEvent(err, event);
-    console.log(errorEvent);
-
-    if (errorEvent.DetailType === EVENT_RETRY) {
-      const retryMessage = makeRetryMessage(errorEvent);
-      console.log(retryMessage);
-      const sqsRes = await sendMessage(retryMessage);
-      console.log(sqsRes);
-    }
-
-    await sendEvents([errorEvent]);
+    await handleProviderError(err, event);
     return;
   };
 }
