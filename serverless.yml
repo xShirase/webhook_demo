@@ -67,7 +67,7 @@ functions:
 
   
   onCollectionRequested:
-    handler: handlers/events/onCollectionRequested.handler
+    handler: src/handlers/events/onCollectionRequested.handler
     maximumRetryAttempts: 0
     events:
         - eventBridge:
