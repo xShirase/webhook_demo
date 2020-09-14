@@ -59,9 +59,9 @@ We could have used a state machine to run the retry function, as it offers integ
 #### Implementation steps 
 
 I've broken down the work to be done into stories (for easy PRs) :
-- DEMO-001 Setup project and "providers" endpoints
-- DEMO-002 Configure serverless.yml and build project tree
-- DEMO-003 Request Collection endpoint
-- DEMO-004 onCollectionRequested endpoint
-- DEMO-005 Retry mechanism (onCollectionFailed)
-- DEMO-006 onCollectionSucceeded endpoint
+- [DEMO-001 Setup project and "providers" endpoints](https://github.com/xShirase/webhook_demo/pull/1)
+- [DEMO-002 Configure serverless.yml and build project tree](https://github.com/xShirase/webhook_demo/pull/2)
+- [DEMO-003 Request Collection endpoint](https://github.com/xShirase/webhook_demo/pull/3)
+- [DEMO-004 onCollectionRequested endpoint]()
+- [DEMO-005 Retry mechanism (onCollectionFailed)]()
+- [DEMO-006 onCollectionSucceeded endpoint]()
