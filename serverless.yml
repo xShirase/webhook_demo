@@ -1,4 +1,4 @@
-service: webhook_demo
+service: webhookdemo
 frameworkVersion: '2'
 
 provider:
@@ -28,7 +28,7 @@ provider:
 
 
 custom: 
-  eventBus: webhook_demo
+  eventBus: webhookdemo
   retryQueue: { Ref: RetryQueue }
 
 resources:
