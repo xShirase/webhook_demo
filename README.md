@@ -11,25 +11,45 @@
 ## Approach
 
 I choose to leverage my extensive AWS/Serverless experience and propose to you a solution that is :
-- Fully serverless, 
+
+- Microservice
+- Serverless 
 - asynchronous
 - event-driven
 - fault-tolerant
 - highly scalable
-- infra-as-code
+- easy to maintain (low-code)
+- very, very cheap
 
-### Tech Stack
+It also allows many possibilities for creative extensions.
+
+### Stack
+- Node 12
 - TypeScript
-- AWS : ApiGateway/Lambda/EventBridge/SQS
-- Serverless framework
+- AWS : 
+    - API: [ApiGateway](https://aws.amazon.com/api-gateway/)
+    - Code: [Lambda](https://aws.amazon.com/lambda/)
+    - Event bus:[EventBridge](https://aws.amazon.com/eventbridge)
+    - Queue: [SQS](https://aws.amazon.com/sqs)
+- Deployment: [Serverless](https://www.serverless.com/)
+
+### Prerequisites
+
+The service is already deployed, baseUrl : `https://yeotqau052.execute-api.us-east-1.amazonaws.com/dev`
+Custom AWS Keys will be provided on chat/by email with full access to everything relevant.
+
+- Node 12+
+- Serverless `npm i -g serverless`, then run command `serverless` to setup AWS keys
+- `npm i`
+- `npm run deploy`
 
 ### Proposal
 
 #### POST endpoint
 ![Collection Endpoint Diagram](docs_assets/requestCollection.PNG "Collection Endpoint Diagram")
-- The entry point (/collect) is an API Gateway Lambbda integration 
+- The entry point (/collect) is an API Gateway Lambda integration 
 - Validation is done through a JSON schema directly on API Gateway, no invalid payload will reach Lambda (saves execution costs + no-code approach)
-- If the Payload is Valid, Lambda emits a `CollectionRequested` event to EventBridge
+- If the Payload is valid, Lambda emits a `CollectionRequested` event to EventBridge
 - The client receives a unique `RequestId` for debugging purposes
 
 ### Data Collection
@@ -39,13 +59,13 @@ I choose to leverage my extensive AWS/Serverless experience and propose to you a
 - To reduce latency and costs further, a Lambda directly processes the `CollectionRequested` event and requests the data from the external provider
   - If collection is successful, Lambda emits a `CollectionSuccessful` event
   - If we catch an internal error we avoid retrying as it is more than likely the fault is on our side.
-    Lambda emits a `CollectionCriticallyFailed` event which will have to be reviewed by the tech team
+    Lambda emits a `CollectionCriticallyFailed` event which can be handle as desirable.
   - If it looks like an external server Error, we place a `CollectionRetryRequested` message in a queue, with a `DelaySeconds` property calculated using the exponential backoff algorithm (with a maximum of 15 minutes between retries). We also send the event to the bridge for logging purposes (optional).
-  - If we reach the `maxRetries` parameter, we emit a `CollectionCriticallyFailed` event which will have to be reviewed by the tech team
+  - If we reach the `maxRetries` parameter, we emit a `CollectionMaxRetriesReached` event.
   
 #### Data collection retry
-- The handler is essentially the same than `onCollectionRequested`, with the following differences
-  - Source event comes from SQS and has been delayed according to our backoff params
+- The handler is essentially the same than `onCollectionRequested`, with the following difference(s):
+  - Source event comes from SQS (delayed according to our backoff params)
   
 #### Design Choices
 - Exponential backoff
@@ -67,3 +87,25 @@ I've broken down the work to be done into stories (for easy PRs) :
 - [DEMO-004 onCollectionRequested endpoint](https://github.com/xShirase/webhook_demo/pull/4)
 - [DEMO-005 Retry mechanism (onCollectionFailed)](https://github.com/xShirase/webhook_demo/pull/5)
 - [DEMO-006 onCollectionSucceeded endpoint](https://github.com/xShirase/webhook_demo/pull/6)
+
+#### Further Work
+
+I feel like there's at least enough to start talking about code with you guys, the following work is definitely needed and will be added in time or upon request.
+
+
+- Setup Cloudwatch dashboard to centralise metrics
+- Solidify error handling (lambda DLQ)
+
+- Cleanup
+    - `TODO` hunting
+    - add types / remove `any` 
+    - add handler tests
+    - on commit: lint, commit format
+    - on push: prettier, CircleCI
+
+- Features
+    - Multi-providers
+    - Retry Callback (How many times? Probs not worth the same care than the provider? Could services listen for `CollectionSucceeded` instead?)
+
+
+In addition, the dummy providers and callback endpoints are not parrt of the domain of this microservice and should be removed. 

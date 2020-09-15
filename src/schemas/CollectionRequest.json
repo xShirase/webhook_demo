@@ -9,10 +9,12 @@
         "callbackUrl": {
             "type": "string",
             "title": "The Callback URL",
-            "default": ""
+            "default": "",
+            "pattern": "^https?://.+"
         },
         "provider": {
             "type": "string",
+            "minLength": 1,
             "title": "The Provider to Collect",
             "default": ""
         }

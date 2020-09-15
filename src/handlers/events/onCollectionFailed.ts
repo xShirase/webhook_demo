@@ -1,11 +1,9 @@
-import axios from 'axios';
 import { sendEvents } from '../../utils/aws/EventBridge'
 import { deleteMessage } from '../../utils/aws/SQS'
 import { handleProviderError, requestBills } from '../../utils/helpers'
 
 
 export const onCollectionFailed = async (event: any) => {
-  console.log(event);
   const message = event.Records[0];
   const body = JSON.parse(message.body);
   const detail = JSON.parse(body.Detail);
@@ -14,7 +12,6 @@ export const onCollectionFailed = async (event: any) => {
     id: detail.originalRequestId
   }
   baseEvent.detail.attempts += 1;
-  console.log('base', baseEvent);
 
   try {
     const delRes = await deleteMessage({
