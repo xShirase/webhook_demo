@@ -19,12 +19,12 @@ provider:
         - '*'
 
   environment:
-    backoffRate: 3
-    backoffIntervalSeconds: 60
+    backoffRate: 1.5
+    backoffIntervalSeconds: 10
     backoffMaxRetries: 10
     retryQueue: ${self:custom.retryQueue}
     eventBus: ${self:custom.eventBus}
-    providerBasePath: 'https://fszntdeqr9.execute-api.us-east-1.amazonaws.com/dev/provider/'
+    providerBasePath: 'https://yeotqau052.execute-api.us-east-1.amazonaws.com/dev/provider/'
 
 
 custom: 
@@ -94,7 +94,7 @@ functions:
     maximumRetryAttempts: 0
     events:
         - eventBridge:
-            eventBus: ${self:custom.eventBus}
+            eventBus: arn:aws:events:#{AWS::Region}:#{AWS::AccountId}:event-bus/${self:custom.eventBus}
             pattern:
                 detail-type:
                   - CollectionSucceeded

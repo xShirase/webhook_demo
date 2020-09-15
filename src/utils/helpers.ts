@@ -1,7 +1,7 @@
 import { prepareEvent, sendEvents } from './aws/EventBridge';
 import { sendMessage } from './aws/SQS';
 import axios from 'axios';
-import { EVENT_RETRY, EVENT_CRITICAL, EVENT_SUCCESS, EVENT_MAXRETRY } from '../constants';
+import { EVENT_RETRY, EVENT_CRITICAL, EVENT_SUCCESS, EVENT_MAXRETRY, EVENT_CALLBACK } from '../constants';
 import { SendMessageRequest } from 'aws-sdk/clients/sqs';
 import { EventBridge } from 'aws-sdk';
 
@@ -69,5 +69,6 @@ export const handleProviderError = async (err: any, event: any): Promise<void> =
 
 export const callHook = async (event): Promise<void> => {
   const { callbackUrl } = event.detail;
-  await axios.post(callBackUrl, event.detail);
+  await axios.post(callbackUrl, event.detail);
+  // makeEvent(EVENT_CALLBACK, { ...event.detail, originalRequestId });
 };
